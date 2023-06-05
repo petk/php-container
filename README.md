@@ -1,5 +1,7 @@
 # PHP dependency injection container
 
+![Test workflow](https://github.com/petk/php-container/actions/workflows/tests.yaml/badge.svg)
+
 This is a PHP package with PSR-11 compatible dependency injection container.
 
 ## Installation
