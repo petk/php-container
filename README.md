@@ -32,3 +32,11 @@ $container->set(App\Database::class, function ($c) {
     return new App\Database($c->get(App\Utility::class));
 });
 ```
+
+## Development
+
+PHPUnit is used to run tests:
+
+```sh
+./vendor/bin/phpunit --display-warnings
+```
