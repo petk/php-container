@@ -35,6 +35,43 @@ $container->set(App\Database::class, function ($c) {
 });
 ```
 
+## Circular dependencies
+
+Circular dependencies are a bad practice where two classes have dependencies of
+each other. See the following example:
+
+```php
+
+// ...
+
+class ChildClass
+{
+    public function __construct(private ParentClass $parent)
+    {
+    }
+}
+
+class ParentClass
+{
+    public function __construct(private ChildClass $child)
+    {
+    }
+}
+
+$container->set(ParentClass::class, function ($c) {
+    return new ParentClass($c->get(ChildClass::class));
+});
+
+$container->set(ChildClass::class, function ($c) {
+    return new ChildClass($c->get(ParentClass::class));
+});
+
+// This will throw ContainerException.
+```
+
+Above will throw the `ContainerException` which means building dependencies
+should be done differently.
+
 ## Development
 
 PHPUnit is used to run tests:

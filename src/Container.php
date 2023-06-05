@@ -80,9 +80,9 @@ class Container implements ContainerInterface
 
         // Entry is a service.
         if (class_exists($id) && !is_callable($entry)) {
-            throw new ContainerException($id.' entry must be callable.');
+            throw new ContainerException($id . ' entry must be callable.');
         } elseif (class_exists($id) && isset($this->locks[$id])) {
-            throw new ContainerException($id.' entry contains a circular reference.');
+            throw new ContainerException($id . ' entry contains a circular reference.');
         }
 
         $this->locks[$id] = true;

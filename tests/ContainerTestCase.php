@@ -8,4 +8,10 @@ use PHPUnit\Framework\TestCase;
 
 class ContainerTestCase extends TestCase
 {
+    /**
+     * Set up test environment.
+     */
+    public function setUp(): void
+    {
+    }
 }
