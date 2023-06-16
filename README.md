@@ -12,14 +12,14 @@ composer require petk/php-container
 
 ## Usage
 
+Create, for example, `config/container.php` file:
+
 ```php
 <?php
 
-// Require Composer autoloader.
-require __DIR__ . '/vendor/autoload.php';
+declare(strict_types=1);
 
-// Use the Container class.
-use Petk\Container\Container;
+use Petk\Container;
 
 // Container instantiation.
 $container = new Container();
@@ -33,6 +33,26 @@ $container->set(App\Utility::class, function ($c) {
 $container->set(App\Database::class, function ($c) {
     return new App\Database($c->get(App\Utility::class));
 });
+
+return $container;
+```
+
+Then you can use such container configuration in the application front
+controller or other application entry files like this.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+// Require Composer autoloader.
+require __DIR__ . '/vendor/autoload.php';
+
+// Use the Container class.
+$container = require __DIR__ . '/../config/container.php';
+
+$database = $container->get(App\Database::class);
+// Use $database further.
 ```
 
 ## Circular dependencies
@@ -41,6 +61,7 @@ Circular dependencies are a bad practice where two classes have dependencies of
 each other. See the following example:
 
 ```php
+<?php
 
 // ...
 
@@ -79,3 +100,9 @@ PHPUnit is used to run tests:
 ```sh
 ./vendor/bin/phpunit --display-warnings
 ```
+
+## License and contributing
+
+[Contributions](https://github.com/petk/php-container/blob/main/docs/CONTRIBUTING.md)
+are welcome by forking the repository on GitHub. This repository is released
+under the [MIT license](https://github.com/petk/php-container/blob/main/LICENSE).

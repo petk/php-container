@@ -6,6 +6,11 @@ namespace Petk\Container\Tests;
 
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class ContainerTestCase extends TestCase
 {
     /**

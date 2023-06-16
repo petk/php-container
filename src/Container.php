@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Petk\Container;
 
+use Petk\Container\Exception\ContainerEntryNotFoundException;
 use Petk\Container\Exception\ContainerException;
-use Petk\Container\Exception\EntryNotFoundException;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -48,7 +50,7 @@ class Container implements ContainerInterface
     public function get(string $id): mixed
     {
         if (!$this->has($id)) {
-            throw new EntryNotFoundException($id.' entry not found.');
+            throw new ContainerEntryNotFoundException($id . ' entry not found.');
         }
 
         if (!isset($this->store[$id])) {
@@ -78,10 +80,13 @@ class Container implements ContainerInterface
             return $entry;
         }
 
-        // Entry is a service.
+        // Invalid entry.
         if (class_exists($id) && !is_callable($entry)) {
             throw new ContainerException($id . ' entry must be callable.');
-        } elseif (class_exists($id) && isset($this->locks[$id])) {
+        }
+
+        // Circular reference.
+        if (class_exists($id) && isset($this->locks[$id])) {
             throw new ContainerException($id . ' entry contains a circular reference.');
         }
 
