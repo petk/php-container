@@ -9,4 +9,9 @@ class Utility
     public function __construct(private Doer $doer)
     {
     }
+
+    public function getDoer(): Doer
+    {
+        return $this->doer;
+    }
 }

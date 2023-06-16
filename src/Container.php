@@ -15,21 +15,29 @@ class Container implements ContainerInterface
 {
     /**
      * All defined services and parameters.
+     *
+     * @var array<string,mixed>
      */
     public array $entries = [];
 
     /**
      * Already retrieved items are stored for faster retrievals in the same run.
+     *
+     * @var array<string,mixed>
      */
     private array $store = [];
 
     /**
      * Services already created to prevent circular references.
+     *
+     * @var array<string,bool>
      */
     private array $locks = [];
 
     /**
      * Class constructor.
+     *
+     * @param array<string,mixed> $configurations
      */
     public function __construct(array $configurations = [])
     {
@@ -92,6 +100,7 @@ class Container implements ContainerInterface
 
         $this->locks[$id] = true;
 
+        /** @var callable $entry */
         return $entry($this);
     }
 }

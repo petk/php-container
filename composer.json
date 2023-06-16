@@ -25,6 +25,7 @@
         "ext-libxml": "*",
         "ext-xml": "*",
         "ext-xmlwriter": "*",
+        "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^10.2"
     },
     "autoload": {

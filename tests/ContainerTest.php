@@ -21,6 +21,9 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class ContainerTest extends ContainerTestCase
 {
+    /**
+     * @param class-string<object> $valid
+     */
     #[DataProvider('keyProvider')]
     public function testSet(string $key, string $valid): void
     {
@@ -86,6 +89,9 @@ class ContainerTest extends ContainerTestCase
         $parent = $container->get(ParentClass::class);
     }
 
+    /**
+     * @return array<int,array<int,class-string|string>>
+     */
     public static function keyProvider(): array
     {
         return [

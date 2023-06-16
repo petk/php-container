@@ -9,4 +9,9 @@ class ChildClass
     public function __construct(private ParentClass $parent)
     {
     }
+
+    public function getParent(): ParentClass
+    {
+        return $this->parent;
+    }
 }
