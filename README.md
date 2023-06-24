@@ -12,7 +12,8 @@ composer require petk/php-container
 
 ## Usage
 
-Create, for example, `config/container.php` file:
+Create, for example, `config/container.php` file which returns container
+instance:
 
 ```php
 <?php
@@ -38,7 +39,7 @@ return $container;
 ```
 
 Then you can use such container configuration in the application front
-controller or other application entry files like this.
+controller or other application entry files like this:
 
 ```php
 <?php
@@ -87,19 +88,14 @@ $container->set(ChildClass::class, function ($c) {
     return new ChildClass($c->get(ParentClass::class));
 });
 
-// This will throw ContainerException.
+// This will throw ContainerCircularDependencyException.
+$object = $container->get(Parent::class);
 ```
 
-Above will throw the `ContainerException` which means building dependencies
-should be done differently.
-
-## Development
-
-PHPUnit is used to run tests:
-
-```sh
-./vendor/bin/phpunit --display-warnings
-```
+Above will throw the `ContainerCircularDependencyException` which means
+constructing dependencies of `ParentClass` and `ChildClass` should be done
+differently. Perhaps you need event driven implementation here or something
+else.
 
 ## License and contributing
 

@@ -5,14 +5,17 @@ declare(strict_types=1);
 namespace Petk\Container\Tests;
 
 use Petk\Container\Container;
+use Petk\Container\Exception\ContainerCircularDependencyException;
 use Petk\Container\Exception\ContainerEntryNotFoundException;
-use Petk\Container\Exception\ContainerException;
+use Petk\Container\Exception\ContainerInvalidEntryException;
 use Petk\Container\Tests\Fixtures\CircularReference\ChildClass;
 use Petk\Container\Tests\Fixtures\CircularReference\ParentClass;
 use Petk\Container\Tests\Fixtures\Database;
 use Petk\Container\Tests\Fixtures\Doer;
 use Petk\Container\Tests\Fixtures\Utility;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Exception;
+use PHPUnit\Framework\ExpectationFailedException;
 
 /**
  * @internal
@@ -22,10 +25,39 @@ use PHPUnit\Framework\Attributes\DataProvider;
 class ContainerTest extends ContainerTestCase
 {
     /**
-     * @param class-string<object> $valid
+     * @throws ExpectationFailedException
      */
-    #[DataProvider('keyProvider')]
-    public function testSet(string $key, string $valid): void
+    #[DataProvider('constructorEntriesProvider')]
+    public function testConstructor(string $id, mixed $valid): void
+    {
+        $entries = [
+            'database_username' => 'foobar',
+            'some_configuration' => 42,
+        ];
+
+        $container = new Container($entries);
+
+        $this->assertEquals($valid, $container->get($id));
+    }
+
+    /**
+     * @return array<int,array<int,mixed>>
+     */
+    public static function constructorEntriesProvider(): array
+    {
+        return [
+            ['database_username', 'foobar'],
+            ['some_configuration', 42],
+        ];
+    }
+
+    /**
+     * @param class-string<object> $valid
+     *
+     * @throws Exception
+     */
+    #[DataProvider('idProvider')]
+    public function testSet(string $id, string $valid): void
     {
         $container = new Container();
 
@@ -45,12 +77,40 @@ class ContainerTest extends ContainerTestCase
             return new \stdClass();
         });
 
-        $this->assertInstanceOf($valid, $container->get($key));
+        $this->assertInstanceOf($valid, $container->get($id));
     }
 
+    /**
+     * @return array<int,array<int,class-string|string>>
+     */
+    public static function idProvider(): array
+    {
+        return [
+            [Database::class, Database::class],
+            [Doer::class, Doer::class],
+            [Utility::class, Utility::class],
+            ['foo-bar', \stdClass::class],
+        ];
+    }
+
+    /**
+     * @throws ContainerInvalidEntryException
+     */
+    public function testSetInvalidEntry(): void
+    {
+        $this->expectException(ContainerInvalidEntryException::class);
+
+        $container = new Container();
+
+        $container->set(ParentClass::class, new \stdClass());
+    }
+
+    /**
+     * @throws ContainerCircularDependencyException
+     */
     public function testSetCircularDependency(): void
     {
-        $this->expectException(ContainerException::class);
+        $this->expectException(ContainerCircularDependencyException::class);
 
         $container = new Container();
 
@@ -62,20 +122,12 @@ class ContainerTest extends ContainerTestCase
             return new ChildClass($c->get(ParentClass::class));
         });
 
-        $parent = $container->get(ParentClass::class);
+        $container->get(ParentClass::class);
     }
 
-    public function testSetInvalidEntry(): void
-    {
-        $this->expectException(ContainerException::class);
-
-        $container = new Container();
-
-        $container->set(ParentClass::class, new \stdClass());
-
-        $parent = $container->get(ParentClass::class);
-    }
-
+    /**
+     * @throws ContainerEntryNotFoundException
+     */
     public function testGetMissingEntry(): void
     {
         $this->expectException(ContainerEntryNotFoundException::class);
@@ -86,19 +138,6 @@ class ContainerTest extends ContainerTestCase
             return new \stdClass();
         });
 
-        $parent = $container->get(ParentClass::class);
-    }
-
-    /**
-     * @return array<int,array<int,class-string|string>>
-     */
-    public static function keyProvider(): array
-    {
-        return [
-            [Database::class, Database::class],
-            [Doer::class, Doer::class],
-            [Utility::class, Utility::class],
-            ['foo-bar', \stdClass::class],
-        ];
+        $container->get(ParentClass::class);
     }
 }

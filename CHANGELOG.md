@@ -9,9 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Fixed code style.
-- Exception names synced with the container context.
 - Added more tests and note about circular dependencies.
+- Exception names synced with the container context.
+
+### Fixed
+
+- Fixed code style.
 
 ## [0.0.1] - 2023-06-05
 

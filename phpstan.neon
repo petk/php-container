@@ -3,3 +3,10 @@ parameters:
     paths:
         - src
         - tests
+    exceptions:
+        uncheckedExceptionRegexes:
+            - '#^Petk\\Container\\Exception\\#'
+        check:
+            missingCheckedExceptionInThrows: true
+            tooWideThrowType: true
+        implicitThrows: true
