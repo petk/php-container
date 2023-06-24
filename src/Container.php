@@ -36,7 +36,7 @@ class Container implements ContainerInterface
     private array $locks = [];
 
     /**
-     * @param array<string,mixed> $entries
+     * @param array<string,mixed> $entries A list of initial parameters.
      */
     public function __construct(array $entries = [])
     {

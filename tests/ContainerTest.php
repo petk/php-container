@@ -140,4 +140,38 @@ class ContainerTest extends ContainerTestCase
 
         $container->get(ParentClass::class);
     }
+
+    /**
+     * @throws ExpectationFailedException
+     */
+    #[DataProvider('hasProvider')]
+    public function testHas(string $id, bool $has): void
+    {
+        $entries = [
+            'configuration_option' => 42,
+            'username' => 'john',
+        ];
+
+        $container = new Container($entries);
+
+        $container->set(\stdClass::class, function ($c) {
+            return new \stdClass();
+        });
+
+        $this->assertEquals($has, $container->has($id));
+    }
+
+    /**
+     * @return array<int,array<int,bool|class-string|string>>
+     */
+    public static function hasProvider(): array
+    {
+        return [
+            [Database::class, false],
+            ['username', true],
+            ['configuration_option', true],
+            [Doer::class, false],
+            [\stdClass::class, true],
+        ];
+    }
 }
